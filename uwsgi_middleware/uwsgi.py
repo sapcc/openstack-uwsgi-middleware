@@ -12,14 +12,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import logging
 import uwsgi
 import webob.dec
 
 from oslo_middleware import base
 from oslo_middleware.request_id import ENV_REQUEST_ID, GLOBAL_REQ_ID
 
-LOG = logging.getLogger(__name__)
 
 class Uwsgi(base.ConfigurableMiddleware):
     """Middleware that populates uwsgi variables with openstack request-ids and keystone informations."""
@@ -33,5 +31,9 @@ class Uwsgi(base.ConfigurableMiddleware):
         user_id = req.environ.get('HTTP_X_USER_NAME', req.environ.get('HTTP_X_USER_ID', '-'))
         user_project_id = req.environ.get('HTTP_X_USER_DOMAIN_NAME', req.environ.get('HTTP_X_USER_DOMAIN_ID', '-'))
 
-        uwsgi.set_logvar('request_id', '{} {} ({}/{}@{})'.format(req_id, global_req_id, user_id, user_project_id, proj_id))
+        uwsgi.set_logvar('request_id', req_id)
+        uwsgi.set_logvar('global_request_id', global_req_id)
+        uwsgi.set_logvar('user_id', user_id),
+        uwsgi.set_logvar('user_project_id', user_project_id)
+        uwsgi.set_logvar('project_id', proj_id)
         return req.get_response(self.application)
