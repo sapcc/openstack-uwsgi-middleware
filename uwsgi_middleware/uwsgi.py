@@ -24,16 +24,22 @@ class Uwsgi(base.ConfigurableMiddleware):
 
     @webob.dec.wsgify
     def __call__(self, req):
-        req_id = req.environ.get(ENV_REQUEST_ID, '-')
-        global_req_id = req.environ.get(GLOBAL_REQ_ID, '-')
+        req_id = req.environ.get(ENV_REQUEST_ID)
+        global_req_id = req.environ.get(GLOBAL_REQ_ID)
 
-        proj_id = req.environ.get('HTTP_X_PROJECT_NAME', req.environ.get('HTTP_X_PROJECT_ID', '-'))
-        user_id = req.environ.get('HTTP_X_USER_NAME', req.environ.get('HTTP_X_USER_ID', '-'))
-        user_project_id = req.environ.get('HTTP_X_USER_DOMAIN_NAME', req.environ.get('HTTP_X_USER_DOMAIN_ID', '-'))
+        proj_id = req.environ.get('HTTP_X_PROJECT_NAME', req.environ.get('HTTP_X_PROJECT_ID'))
+        user_id = req.environ.get('HTTP_X_USER_NAME', req.environ.get('HTTP_X_USER_ID'))
+        user_project_id = req.environ.get('HTTP_X_USER_DOMAIN_NAME', req.environ.get('HTTP_X_USER_DOMAIN_ID'))
 
-        uwsgi.set_logvar('request_id', req_id)
-        uwsgi.set_logvar('global_request_id', global_req_id)
-        uwsgi.set_logvar('user_id', user_id),
-        uwsgi.set_logvar('user_project_id', user_project_id)
-        uwsgi.set_logvar('project_id', proj_id)
+        if req_id:
+            uwsgi.set_logvar('request_id', req_id)
+        if global_req_id:
+            uwsgi.set_logvar('global_request_id', global_req_id)
+        if user_id:
+            uwsgi.set_logvar('user_id', user_id),
+        if user_project_id:
+            uwsgi.set_logvar('user_project_id', user_project_id)
+        if proj_id:
+            uwsgi.set_logvar('project_id', proj_id)
+
         return req.get_response(self.application)
