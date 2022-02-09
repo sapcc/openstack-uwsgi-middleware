@@ -25,7 +25,7 @@ class Uwsgi(base.ConfigurableMiddleware):
     @webob.dec.wsgify
     def __call__(self, req):
         env = {
-            'user': req.environ.get('HTTP_X_USER_ID'),
+            'user_id': req.environ.get('HTTP_X_USER_ID'),
             'project': req.environ.get('HTTP_X_PROJECT_ID'),
             'domain': req.environ.get('HTTP_X_DOMAIN_ID'),
             'user_domain': req.environ.get('HTTP_X_USER_DOMAIN_ID'),
