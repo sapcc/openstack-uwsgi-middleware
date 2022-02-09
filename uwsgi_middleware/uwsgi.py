@@ -34,8 +34,8 @@ class Uwsgi(base.ConfigurableMiddleware):
             'global_request_id': req.environ.get(GLOBAL_REQ_ID)
         }
 
-        for env_val, env_val in six.iteritems(env):
+        for env_var, env_val in six.iteritems(env):
             if env_val:
-                uwsgi.set_logvar(env_val, env_val)
+                uwsgi.set_logvar(env_var, env_val)
 
         return req.get_response(self.application)
