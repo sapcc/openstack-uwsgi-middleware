@@ -13,17 +13,29 @@
 # under the License.
 
 import six
-import uwsgi
-import webob.dec
+from oslo_log import log
 from oslo_middleware import base
 from oslo_middleware.request_id import ENV_REQUEST_ID, GLOBAL_REQ_ID
+
+LOG = log.getLogger(__name__)
+ENABLED = False
+
+try:
+    import uwsgi
+
+    LOG.info("uWSGI %s detected, uwsgi-middleware activated", str(uwsgi.version))
+    ENABLED = True
+except ImportError:
+    LOG.warning("No uWSGI environment detected, uwsgi-middleware disabled")
 
 
 class Uwsgi(base.ConfigurableMiddleware):
     """Middleware that populates uwsgi variables with openstack request-ids and keystone informations."""
 
-    @webob.dec.wsgify
-    def __call__(self, req):
+    def process_request(self, req):
+        if not ENABLED:
+            return None
+
         env = {
             'user_id': req.environ.get('HTTP_X_USER_ID'),
             'project': req.environ.get('HTTP_X_PROJECT_ID'),

@@ -4,6 +4,6 @@
 
 pbr!=2.1.0,>=2.0.0 # Apache-2.0
 oslo.middleware>=3.31.0 # Apache-2.0
-WebOb>=1.8.0 # MIT
+oslo.log  # Apache-2.0
 six>=1.10.0 # MIT
 uwsgi-stub>=0.1.2 # ISC License
